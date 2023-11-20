@@ -1,12 +1,12 @@
 let fields = [
     null,
-    'circle',
     null,
     null,
     null,
     null,
-    'cross',
-    'cross',
+    null,
+    null,
+    null,
     null
 ];
 
@@ -26,18 +26,29 @@ function render() {
             cell.textContent = fields[index] || '';
             row.appendChild(cell);
 
-            if (fields[index] === 'circle') {
-                cell.innerHTML =  generateAnimatedCircle();
-            } else if (fields[index] === 'cross') {
-                cell.innerHTML = generateAnimatedCross();
-            }
+            // Füge das onclick-Attribut hinzu und setze die Funktion für den Klick-Event
+            cell.onclick = function() {
+                handleCellClick(cell, index);
+            };
         }
-        
+
         table.appendChild(row);
     }
 
     contentDiv.innerHTML = '';
     contentDiv.appendChild(table);
+}
+
+function handleCellClick(cell, index) {
+    if (fields[index] === null) {
+        const currentPlayer = fields.filter(field => field !== null).length % 2 === 0 ? 'circle' : 'cross';
+        
+        fields[index] = currentPlayer;
+        const htmlCode = currentPlayer === 'circle' ? generateAnimatedCircle() : generateAnimatedCross();
+
+        cell.innerHTML = htmlCode;
+        cell.onclick = null;
+    }
 }
 
 function generateAnimatedCircle() {
