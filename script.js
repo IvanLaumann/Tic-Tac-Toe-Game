@@ -27,9 +27,9 @@ function render() {
             row.appendChild(cell);
 
             if (fields[index] === 'circle') {
-                cell.textContent = 'o';
+                cell.innerHTML =  generateAnimatedCircle();
             } else if (fields[index] === 'cross') {
-                cell.textContent = 'x';
+                cell.innerHTML = generateAnimatedCross();
             }
         }
         
@@ -38,4 +38,35 @@ function render() {
 
     contentDiv.innerHTML = '';
     contentDiv.appendChild(table);
+}
+
+function generateAnimatedCircle() {
+
+
+    const svgCode = `
+    <svg width="70" height="70" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="35" cy="35" r="30" fill="none" stroke="#00B0EF" stroke-width="5">
+        <animate attributeName="r" values="0;30" dur="200ms" begin="0s"/>
+    </circle>
+</svg>
+    `;
+
+    return svgCode;
+}
+
+function generateAnimatedCross() {
+    const svgCode = `
+        <svg width="70" height="70" xmlns="http://www.w3.org/2000/svg">
+            <line x1="10" y1="10" x2="60" y2="60" stroke="#FFC000" stroke-width="5">
+                <animate attributeName="x2" from="10" to="60" dur="125ms" begin="0s" fill="freeze" />
+                <animate attributeName="y2" from="10" to="60" dur="125ms" begin="0s" fill="freeze" />
+            </line>
+            <line x1="60" y1="10" x2="10" y2="60" stroke="#FFC000" stroke-width="5">
+                <animate attributeName="x2" from="60" to="10" dur="200ms" begin="0s" fill="freeze" />
+                <animate attributeName="y2" from="10" to="60" dur="200ms" begin="0s" fill="freeze" />
+            </line>
+        </svg>
+    `;
+
+    return svgCode;
 }
