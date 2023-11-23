@@ -48,12 +48,21 @@ function handleCellClick(cell, index) {
 
         cell.innerHTML = htmlCode;
         cell.onclick = null;
+
+        const winner = checkGameEnd();
+
+        if (winner === 'circle' || winner === 'cross') {
+            // Gewinner gefunden
+            drawWinningLine(winner);
+            alert(`Spieler ${winner === 'circle' ? 'O' : 'X'} hat gewonnen!`);
+        } else if (winner === 'draw') {
+            // Unentschieden
+            alert('Unentschieden!');
+        }
     }
 }
 
 function generateAnimatedCircle() {
-
-
     const svgCode = `
     <svg width="70" height="70" xmlns="http://www.w3.org/2000/svg">
     <circle cx="35" cy="35" r="30" fill="none" stroke="#00B0EF" stroke-width="5">
@@ -80,4 +89,93 @@ function generateAnimatedCross() {
     `;
 
     return svgCode;
+}
+
+function checkGameEnd() {
+    // Überprüfe auf einen Gewinner
+    const winningCombos = [
+        // Horizontale Linien
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        // Vertikale Linien
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        // Diagonale Linien
+        [0, 4, 8],
+        [2, 4, 6]
+    ];
+
+    for (const combo of winningCombos) {
+        const [a, b, c] = combo;
+        if (fields[a] && fields[a] === fields[b] && fields[a] === fields[c]) {
+            // Gewinner gefunden, gib den Gewinner zurück
+            return fields[a];
+        }
+    }
+
+    // Überprüfe auf ein Unentschieden
+    if (fields.every(cell => cell !== null)) {
+        // Unentschieden
+        return 'draw';
+    }
+
+    // Spiel geht weiter
+    return null;
+}
+
+function drawWinningLine(winner) {
+    const contentDiv = document.getElementById('content');
+
+    if (winner) {
+        // Ermittle die Gewinnkombination
+        const winningCombos = [
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+            [0, 4, 8],
+            [2, 4, 6]
+        ];
+
+        for (const combo of winningCombos) {
+            const [a, b, c] = combo;
+            if (fields[a] && fields[a] === fields[b] && fields[a] === fields[c]) {
+                // Entferne zuerst alle vorhandenen Klassen von allen Zellen
+                const table = contentDiv.querySelector('table');
+                const cells = table.getElementsByTagName('td');
+                for (const cell of cells) {
+                    cell.classList.remove('winning-cell', 'horizontal', 'vertical', 'diagonal-left', 'diagonal-right');
+                }
+
+                // Füge die Klassen zur Gewinnzellen hinzu
+                [a, b, c].forEach(index => {
+                    const cell = cells[index];
+                    cell.classList.add('winning-cell');
+
+                    // Bestimme die Gewinnrichtung und füge die entsprechende Klasse hinzu
+                    if (a % 3 === b % 3 && b % 3 === c % 3) {
+                        cell.classList.add('horizontal');
+                    } else if (Math.floor(a / 3) === Math.floor(b / 3) && Math.floor(b / 3) === Math.floor(c / 3)) {
+                        cell.classList.add('vertical');
+                    } else {
+                        // Diagonale überprüfen
+                        const diagonals = [[0, 4, 8], [2, 4, 6]];
+                        if (diagonals.some(diagonal => diagonal.every(diagonalIndex => combo.includes(diagonalIndex)))) {
+                            if (a === 0 || a === 8) {
+                                cell.classList.add('diagonal-left');
+                            } else {
+                                cell.classList.add('diagonal-right');
+                            }
+                        }
+                    }
+                });
+
+                return;
+            }
+        }
+    }
 }
