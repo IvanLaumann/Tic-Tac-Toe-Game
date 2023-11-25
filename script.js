@@ -52,14 +52,34 @@ function handleCellClick(cell, index) {
         const winner = checkGameEnd();
 
         if (winner === 'circle' || winner === 'cross') {
-            // Gewinner gefunden
             drawWinningLine(winner);
-            alert(`Spieler ${winner === 'circle' ? 'O' : 'X'} hat gewonnen!`);
+            showEndGameOverlay(`Spieler ${winner === 'circle' ? '1' : '2'} hat gewonnen! 🔥`);
         } else if (winner === 'draw') {
-            // Unentschieden
-            alert('Unentschieden!');
+            showEndGameOverlay('Unentschieden! 😁');
         }
     }
+}
+
+function showEndGameOverlay(message) {
+    const endGameOverlay = document.getElementById('endGameOverlay');
+    const endGameContent = document.getElementById('endGameContent');
+    endGameContent.innerHTML = `<h2>${message}</h2><button onclick="restartGame()">Neustart</button>`;
+    endGameOverlay.style.display = 'flex';
+}
+
+function restartGame() {
+    // Hier setzt du die Spielvariablen zurück und versteckst das Overlay
+    fields = [
+        null, null, null,
+        null, null, null,
+        null, null, null
+    ];
+
+    const endGameOverlay = document.getElementById('endGameOverlay');
+    endGameOverlay.style.display = 'none';
+
+    // Rufe die Funktion auf, um das Spiel neu zu rendern
+    render();
 }
 
 function generateAnimatedCircle() {
